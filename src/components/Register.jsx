@@ -1,0 +1,142 @@
+import React, { useState } from 'react';
+const Register = () => {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setError('');
+    // Basic validation
+    if (!firstName || !lastName || !email || !password || !confirmPassword) {
+      setError('Please fill in all fields.');
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+    // Handle registration logic here (e.g., API call)
+    console.log('Registering:', { firstName, lastName, email, password });
+    
+    // Reset form
+    setFirstName('');
+    setLastName('');
+    setEmail('');
+    setPassword('');
+    setConfirmPassword('');
+  };
+  return (
+    <section className="bg-white">
+      <div className="container px-6 py-10 mx-auto">
+        <div className="flex justify-center">
+          <div className="w-full xl:w-3/4 lg:w-11/12 flex">
+            {/* Left Side Image (Optional) */}
+            <div
+              className="w-full h-auto bg-gray-400 hidden lg:block lg:w-5/12 bg-cover rounded-l-lg"
+              style={{ backgroundImage: 'url(https://thumbs.dreamstime.com/z/grunge-headphone-music-city-6981478.jpg?w=400)' }}
+            ></div>
+            {/* Registration Form */}
+            <div className="w-full lg:w-7/12 bg-white p-5 rounded-lg lg:rounded-l-none">
+              <h3 className="pt-4 text-2xl text-center">Create an Account!</h3>
+              {error && <p className="text-red-500 text-center">{error}</p>}
+              <form onSubmit={handleSubmit} className="px-8 pt-6 pb-8 mb-4 bg-white rounded">
+                <div className="mb-4 md:flex md:justify-between">
+                  <div className="mb-4 md:mr-2 md:mb-0">
+                    <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="firstName">
+                      First Name
+                    </label>
+                    <input
+                      className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                      id="firstName"
+                      type="text"
+                      placeholder="First Name"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="md:ml-2">
+                    <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="lastName">
+                      Last Name
+                    </label>
+                    <input
+                      className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                      id="lastName"
+                      type="text"
+                      placeholder="Last Name"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="mb-4">
+                  <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="email">
+                    Email
+                  </label>
+                  <input
+                    className="w-full px-3 py-2 mb-3 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                    id="email"
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="mb-4 md:flex md:justify-between">
+                  <div className="mb-4 md:mr-2 md:mb-0">
+                    <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="password">
+                      Password
+                    </label>
+                    <input
+                      className="w-full px-3 py-2 mb-3 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                      id="password"
+                      type="password"
+                      placeholder="******************"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="md:ml-2">
+                    <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="confirmPassword">
+                      Confirm Password
+                    </label>
+                    <input
+                      className="w-full px-3 py-2 mb-3 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                      id="confirmPassword"
+                      type="password"
+                      placeholder="******************"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="mb-6 text-center">
+                  <button
+                    className="w-full px-4 py-2 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700 focus:outline-none focus:shadow-outline"
+                    type="submit"
+                  >
+                    Register Account
+                  </button>
+                </div>
+                <hr className="mb-6 border-t" />
+                <div className="text-center">
+                  <p className="inline-block text-sm text-blue-500 align-baseline hover:text-blue-800">
+                    Already have an account? <a href="/login">Login here</a>
+                  </p>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+export default Register;
