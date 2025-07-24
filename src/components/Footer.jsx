@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { products } from '../data/products';
 import { FaYoutube, FaGlassMartiniAlt, FaLinkedin, FaFacebook, FaSlack, FaMapMarkerAlt, FaPhone, FaClock, FaEnvelope } from 'react-icons/fa';
 const Footer = () => {
   const [email, setEmail] = useState('');
@@ -88,9 +89,9 @@ const Footer = () => {
         <div>
           <h4 className="font-semibold mb-2">Categories</h4>
           <ul className="space-y-1 text-sm">
-            <li><Link to="/categories/electronics" className="hover:text-yellow-400 transition">Electronics</Link></li>
-            <li><Link to="/categories/speakers" className="hover:text-yellow-400 transition">Speakers</Link></li>
-            <li><Link to="/categories/watches" className="hover:text-yellow-400 transition">Watches</Link></li>
+            <li><Link to="/products/electronics" className="hover:text-yellow-400 transition">Electronics</Link></li>
+            <li><Link to="/products/speakers" className="hover:text-yellow-400 transition">Speakers</Link></li>
+            <li><Link to="/products/watches" className="hover:text-yellow-400 transition">Watches</Link></li>
             <li><Link to="/categories/tshirts" className="hover:text-yellow-400 transition">T-Shirts</Link></li>
             <li><Link to="/categories/accessories" className="hover:text-yellow-400 transition">Accessories</Link></li>
             <li><Link to="/categories/household" className="hover:text-yellow-400 transition">Household</Link></li>

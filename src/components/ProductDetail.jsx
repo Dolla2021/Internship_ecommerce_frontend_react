@@ -1,3 +1,4 @@
+// src/components/ProductDetail.jsx
 import React, { useContext, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { CartContext } from './CartContext';
@@ -9,6 +10,7 @@ const ProductDetail = () => {
   const { addToCart } = useContext(CartContext);
   const { addToWishlist } = useContext(WishlistContext);
   const [selectedColor, setSelectedColor] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(''); // State for success message
   // Find product from centralized data
   const product = products.find((p) => p.id === parseInt(id));
   if (!product) return <div className="p-6 max-w-6xl mx-auto">Product not found</div>;
@@ -17,8 +19,21 @@ const ProductDetail = () => {
       ...product,
       selectedColor: product.colors?.find((c) => c.id === selectedColor)?.label || null,
     });
+    setSuccessMessage(` has been added to your cart!`); // Set success message
+    setTimeout(() => {
+      setSuccessMessage(''); // Clear the message after 3 seconds
+    }, 3000);
     navigate('/cart'); // Navigate to cart after adding product 
-    
+  };
+  const handleAddToWishlist = () => {
+    addToWishlist({
+      ...product,
+      selectedColor: product.colors?.find((c) => c.id === selectedColor)?.label || null,
+    });
+    setSuccessMessage(` has been added to your wishlist!`); // Set success message
+    setTimeout(() => {
+      setSuccessMessage(''); // Clear the message after 3 seconds
+    }, 3000);
   };
   return (
     <div className="max-w-6xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-8 bg-white shadow-md rounded-xl">
@@ -28,7 +43,7 @@ const ProductDetail = () => {
           src={product.image}
           alt={product.name}
           className="w-full max-w-sm object-cover rounded-lg"
-          loading="......"
+          loading="lazy"
         />
       </div>
       {/* Right: Product Info */}
@@ -69,7 +84,6 @@ const ProductDetail = () => {
               onClick={handleAddToCart} // Call the new function
               className="flex items-center gap-2 px-6 py-2 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 transition"
               aria-label={`Add ${product.name} to cart`}
-
             >
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M16 11V3a1 1 0 00-1-1H5a1 1 0 00-1 1v8H2l1 9h14l1-9h-2zM6 4h8v7H6V4z" />
@@ -77,12 +91,7 @@ const ProductDetail = () => {
               Add to Cart
             </button>
             <button
-              onClick={() =>
-                addToWishlist({
-                  ...product,
-                  selectedColor: product.colors?.find((c) => c.id === selectedColor)?.label || null,
-                })
-              }
+              onClick={handleAddToWishlist} // Call the new function
               className="flex items-center gap-2 px-6 py-2 bg-gray-200 text-gray-900 font-semibold rounded-md hover:bg-gray-300 transition"
               aria-label={`Add ${product.name} to wishlist`}
             >
@@ -95,6 +104,27 @@ const ProductDetail = () => {
           <span className="text-2xl font-bold text-gray-800">${product.price}</span>
         </div>
       </div>
+      {/* Success Message Alert */}
+      {successMessage && (
+        <div className="fixed top-10 right-10 z-50 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-md transition-all duration-300">
+          <div className="flex items-center">
+            <svg
+              className="w-5 h-5 mr-2"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+            <span className="font-medium">{successMessage}</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

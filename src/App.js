@@ -19,18 +19,26 @@ import Privacy from './components/Privacy';
 import FAQs from './components/FAQs';
 import Login from './components/Login';
 import Register from './components/Register';
-
-
 import ShopByCategory from './components/ShopByCategory';
+import AccessoriesPage from './components/AccessoriesPage'; 
+import SpeakerPage from './components/SpeakerPage'; // Import the SpeakerPage
+import CameraPage from './components/CameraPage'; // Import the CameraPage
+
 
 const App = () => {
+  
   return (
     <CartProvider>
       <WishlistProvider>
-        <Router>
+       
+        <Router> 
+          
           <div className="min-h-screen w-full flex flex-col">
+           
             <Header />
+
             <Navigation />
+     
             <main className="flex-col flex-1 w-full">
               <Routes>
                 <Route path="/" element={<><ShopByCategory/><Categories /></>} />
@@ -46,14 +54,22 @@ const App = () => {
                 <Route path="/faqs" element={<FAQs />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/products/accessories" element={<AccessoriesPage />} />
+                <Route path="/products/speakers" element={<SpeakerPage />} /> {/* Route for Speaker Page */}
+                <Route path="/cameras" element={<CameraPage />} /> {/* Route for Camera Page */}
+                 
+                
+                
               </Routes>
+              
             </main>
+            
             <Footer />
           </div>
         </Router>
       </WishlistProvider>
     </CartProvider>
+    
   );
 };
-
 export default App;

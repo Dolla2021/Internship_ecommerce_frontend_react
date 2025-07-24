@@ -1,4 +1,4 @@
-
+import DCU from '../assets/DCU-Smartwatch-Bluetooth-Calls-Blue-removebg-preview.png'
 import React from 'react';
 const PromoBanner = () => {
   return (
@@ -16,18 +16,14 @@ const PromoBanner = () => {
           </button>
         </div>
         <div className="sm:w-1/4 mt-2 sm:mt-0">
-          <img
-            src="https://tse3.mm.bing.net/th/id/OIP.5efkDI4nGP3TFe70qL20FwHaHa?pid=ImgDet&w=207&h=207&c=7&dpr=1.6&o=7&rm=3"
-            alt="Smartwatch"
-            className="w-full h-24 object-contain rounded-lg"
-          />
+         
         </div>
       </div>
       {/* Laptop Promo - Row 2 */}
       <div className="bg-gray-100 rounded-lg p-4 flex flex-col md:flex-row items-center gap-4 shadow-md mt-4">
         <div className="w-full md:w-1/3">
           <img
-            src="https://tse3.mm.bing.net/th/id/OIP.5efkDI4nGP3TFe70qL20FwHaHa?pid=ImgDet&w=207&h=207&c=7&dpr=1.6&o=7&rm=3"
+            src="https://tse3.mm.bing.net/th/id/OIP.DQAt2ZkASn0d1RaKLxB7nQHaFO?rs=1&pid=ImgDetMain&o=7&rm=3"
             alt="High-performance laptop"
             className="w-full h-32 object-cover rounded-lg transition-transform transform hover:scale-105"
           />

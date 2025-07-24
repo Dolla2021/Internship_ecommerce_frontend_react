@@ -21,7 +21,7 @@ const ShopByCategory = () => {
   return (
     <div className="p-6 flex flex-col sm:flex-row items-start">
       <div className="w-20 sm:w-1/5 mb-4 sm:mb-0">
-        <h2 className="text-lg font-semibold mb-4">SHOP BY CATEGORY</h2>
+        <h2 className="text-lg font-semibold mb-4">SHOP BY BLOCK</h2>
         <div className="flex space-x-6">
           <div className="flex flex-col space-y-3">
             {firstColumn.map((category, index) => (
