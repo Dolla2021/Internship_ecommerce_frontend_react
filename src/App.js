@@ -1,6 +1,6 @@
 // src/App.js
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { CartProvider } from './components/CartContext';
 import { WishlistProvider } from './components/WishlistContext';
 import Header from './components/Header';
@@ -21,55 +21,66 @@ import Login from './components/Login';
 import Register from './components/Register';
 import ShopByCategory from './components/ShopByCategory';
 import AccessoriesPage from './components/AccessoriesPage'; 
-import SpeakerPage from './components/SpeakerPage'; // Import the SpeakerPage
-import CameraPage from './components/CameraPage'; // Import the CameraPage
-
-
+import SpeakerPage from './components/SpeakerPage';
+import CameraPage from './components/CameraPage';
+import AdminPage from './Admin/AdminPage';
+import Checkout from './components/Checkout';
+// Admin Nested Sections
+import AnalyticsSection from './Admin/component/AnalyticsSection';
+import CustomersSection from './Admin/component/CustomersSection';
+import OrdersSection from './Admin/component/OrdersSection';
+import ProductsSection from './Admin/component/ProductsSection';
+const AppContent = () => {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
+  return (
+    <div className="min-h-screen w-full flex flex-col">
+      {!isAdminRoute && <Header />}
+      {!isAdminRoute && <Navigation />}
+      <main className="flex-col flex-1 w-full">
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<><ShopByCategory /><Categories /></>} />
+          <Route path="/products/:id" element={<ProductDetail />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/search" element={<SearchResults />} />
+          <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/faqs" element={<FAQs />} />
+          {/* Category Routes */}
+          <Route path="/products/accessories" element={<AccessoriesPage />} />
+          <Route path="/products/speakers" element={<SpeakerPage />} />
+          <Route path="/products/cameras" element={<CameraPage />} />
+          {/* Customer Routes (Protected) */}
+          <Route path="/order-history" element={<OrderHistory />} />
+          <Route path="/checkout" element={<Checkout />} />
+          {/* Admin Routes (Protected) */}
+          <Route path="/admin" element={<AdminPage />}>
+            <Route path="products" element={<ProductsSection />} />
+            <Route path="orders" element={<OrdersSection />} />
+            <Route path="customers" element={<CustomersSection />} />
+            <Route path="analytics" element={<AnalyticsSection />} />
+          </Route>
+        </Routes>
+      </main>
+      {!isAdminRoute && <Footer />}
+    </div>
+  );
+};
 const App = () => {
-  
   return (
     <CartProvider>
       <WishlistProvider>
-       
-        <Router> 
-          
-          <div className="min-h-screen w-full flex flex-col">
-           
-            <Header />
-
-            <Navigation />
-     
-            <main className="flex-col flex-1 w-full">
-              <Routes>
-                <Route path="/" element={<><ShopByCategory/><Categories /></>} />
-                <Route path="/products/:id" element={<ProductDetail />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/search" element={<SearchResults />} />
-                <Route path="/wishlist" element={<Wishlist />} />
-                <Route path="/order-history" element={<OrderHistory />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/terms" element={<Terms />} />
-                <Route path="/privacy" element={<Privacy />} />
-                <Route path="/faqs" element={<FAQs />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/products/accessories" element={<AccessoriesPage />} />
-                <Route path="/products/speakers" element={<SpeakerPage />} /> {/* Route for Speaker Page */}
-                <Route path="/cameras" element={<CameraPage />} /> {/* Route for Camera Page */}
-                 
-                
-                
-              </Routes>
-              
-            </main>
-            
-            <Footer />
-          </div>
+        <Router>
+          <AppContent />
         </Router>
       </WishlistProvider>
     </CartProvider>
-    
   );
 };
 export default App;

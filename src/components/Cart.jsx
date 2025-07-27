@@ -1,6 +1,7 @@
 // src/components/Cart.jsx
 import React, { useContext } from 'react';
 import { CartContext } from './CartContext';
+import { Link } from 'react-router-dom';
 
 const Cart = () => {
   const { cart, removeFromCart, updateCartQuantity } = useContext(CartContext);
@@ -87,7 +88,10 @@ const Cart = () => {
                 .toFixed(2)}
             </p>
             <button className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
+          
+            <Link to="/checkout" className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
               Proceed to Checkout
+            </Link> 
             </button>
           </div>
         </div>
