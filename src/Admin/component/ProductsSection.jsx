@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+
 const ProductsSection = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [categories] = useState(['T-Shirt', 'Nike Shoes', 'Begs', 'Mobile phone', 'Watch']);
+  const [categories, setCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [priceRange, setPriceRange] = useState({ min: 500, max: 5000 });
@@ -13,10 +13,11 @@ const ProductsSection = () => {
   const productsPerPage = 9;
   useEffect(() => {
     fetchProducts();
+    fetchCategories();
   }, []);
   const fetchProducts = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/products');
+      const response = await axios.get('http://localhost:3000/api/products');
       setProducts(response.data);
       setLoading(false);
     } catch (error) {
@@ -24,11 +25,19 @@ const ProductsSection = () => {
       setLoading(false);
     }
   };
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/api/categories');
+      setCategories(response.data);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
   const handleCategoryToggle = (category) => {
     setSelectedCategories((prev) =>
       prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category]
     );
-    setCurrentPage(1); // Reset to first page when filter changes
+    setCurrentPage(1);
   };
   const handlePriceRangeChange = (e, type) => {
     setPriceRange(prev => ({
@@ -42,6 +51,22 @@ const ProductsSection = () => {
       key,
       direction: sortConfig.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc'
     });
+  };
+  const handleAddProduct = async (productData) => {
+    try {
+      await axios.post('http://localhost:3000/api/products', productData);
+      fetchProducts(); // Refresh the products list
+    } catch (error) {
+      console.error('Error adding product:', error);
+    }
+  };
+  const handleDeleteProduct = async (productId) => {
+    try {
+      await axios.delete(`http://localhost:8000/api/products/${productId}`);
+      fetchProducts(); // Refresh the products list
+    } catch (error) {
+      console.error('Error deleting product:', error);
+    }
   };
   // Filter products based on all criteria
   const filteredProducts = products
@@ -66,128 +91,138 @@ const ProductsSection = () => {
   );
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
   if (loading) return <div>Loading...</div>;
-  return (
-    <div className="flex gap-6">
-      {/* Sidebar Filter */}
-      <aside className="w-64 bg-white shadow rounded-lg p-4">
-        <h3 className="text-lg font-bold mb-4">Filter</h3>
+  // Rest of the component remains the same...
+   return (
+    <div className="container mx-auto px-4">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Products Management</h2>
+        <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+          Add New Product
+        </button>
+      </div>
+      {/* Search and Filter Section */}
+      <div className="mb-6 flex flex-wrap gap-4">
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search products..."
+          className="p-2 border rounded w-full md:w-64"
+        />
         
-        {/* Search */}
-        <div className="mb-6">
+        {/* Price Range Filter */}
+        <div className="flex items-center gap-2">
           <input
-            type="text"
-            placeholder="Search products..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full p-2 border rounded"
+            type="number"
+            value={priceRange.min}
+            onChange={(e) => handlePriceRangeChange(e, 'min')}
+            placeholder="Min Price"
+            className="p-2 border rounded w-24"
           />
-        </div>
-        {/* Categories */}
-        <div className="mb-6">
-          <h4 className="font-medium mb-2">Categories</h4>
-          {categories.map((cat) => (
-            <label key={cat} className="block mb-1 text-sm">
-              <input
-                type="checkbox"
-                className="mr-2"
-                checked={selectedCategories.includes(cat)}
-                onChange={() => handleCategoryToggle(cat)}
-              />
-              {cat}
-            </label>
-          ))}
-        </div>
-        {/* Price Range */}
-        <div className="mb-6">
-          <h4 className="font-medium mb-2">Price Range</h4>
-          <div className="flex gap-2 mb-2">
-            <input
-              type="number"
-              value={priceRange.min}
-              onChange={(e) => handlePriceRangeChange(e, 'min')}
-              className="w-1/2 p-1 border rounded"
-            />
-            <input
-              type="number"
-              value={priceRange.max}
-              onChange={(e) => handlePriceRangeChange(e, 'max')}
-              className="w-1/2 p-1 border rounded"
-            />
-          </div>
+          <span>-</span>
           <input
-            type="range"
-            className="w-full"
-            min={500}
-            max={5000}
+            type="number"
             value={priceRange.max}
             onChange={(e) => handlePriceRangeChange(e, 'max')}
+            placeholder="Max Price"
+            className="p-2 border rounded w-24"
           />
         </div>
-      </aside>
-      {/* Products Grid */}
-      <div className="flex-1">
-        <div className="flex justify-between items-center mb-4">
-          <p className="text-sm text-gray-600">
-            Showing {paginatedProducts.length} of {filteredProducts.length} products
-          </p>
-          <div className="flex gap-4">
-            <select
-              onChange={(e) => handleSort(e.target.value)}
-              className="p-2 border rounded"
-            >
-              <option value="name">Sort by Name</option>
-              <option value="price">Sort by Price</option>
-              <option value="category">Sort by Category</option>
-            </select>
-            <button className="bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-600">
-              + Add Product
-            </button>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {paginatedProducts.map((product) => (
-            <div key={product.id} className="bg-white p-4 rounded-lg shadow hover:shadow-md">
-              <img
-                src={product.image || 'https://via.placeholder.com/300x200'}
-                alt={product.name}
-                className="w-full h-40 object-cover rounded mb-3"
-              />
-              <h3 className="font-semibold text-gray-800">{product.name}</h3>
-              <p className="text-sm text-gray-500">{product.category}</p>
-              <div className="text-yellow-500 text-sm mb-1">★★★★★</div>
-              <p className="text-lg font-bold text-gray-900">
-                ${product.price}
-                {product.oldPrice && (
-                  <span className="text-sm text-gray-400 line-through ml-2">${product.oldPrice}</span>
-                )}
-              </p>
-              <div className="flex gap-2 mt-3">
-                <button className="flex-1 border border-gray-300 text-sm py-1 rounded hover:bg-gray-100">
-                  Edit
-                </button>
-                <button className="flex-1 bg-red-500 text-white text-sm py-1 rounded hover:bg-red-600">
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-        {/* Pagination */}
-        <div className="flex justify-center mt-6">
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+      </div>
+      {/* Categories Filter */}
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold mb-2">Categories</h3>
+        <div className="flex flex-wrap gap-2">
+          {categories.map((category) => (
             <button
-              key={page}
-              onClick={() => setCurrentPage(page)}
-              className={`w-9 h-9 rounded-full mx-1 text-sm ${
-                currentPage === page
-                  ? 'bg-indigo-500 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              key={category.id}
+              onClick={() => handleCategoryToggle(category.id)}
+              className={`px-3 py-1 rounded ${
+                selectedCategories.includes(category.id)
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-200'
               }`}
             >
-              {page}
+              {category.name}
             </button>
           ))}
         </div>
+      </div>
+      {/* Products Table */}
+      <div className="bg-white shadow rounded-lg overflow-hidden">
+        <table className="min-w-full">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Product
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Category
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Price
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {paginatedProducts.map((product) => (
+              <tr key={product.id}>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="flex items-center">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="h-10 w-10 rounded-full"
+                    />
+                    <div className="ml-4">
+                      <div className="text-sm font-medium text-gray-900">
+                        {product.name}
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                    {product.category}
+                  </span>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  ${product.price}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <button className="text-indigo-600 hover:text-indigo-900 mr-3">
+                    Edit
+                  </button>
+                  <button 
+                    onClick={() => handleDeleteProduct(product.id)}
+                    className="text-red-600 hover:text-red-900"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {/* Pagination */}
+      <div className="mt-4 flex justify-center">
+        {Array.from({ length: totalPages }, (_, i) => (
+          <button
+            key={i + 1}
+            onClick={() => setCurrentPage(i + 1)}
+            className={`mx-1 px-3 py-1 rounded ${
+              currentPage === i + 1
+                ? 'bg-blue-500 text-white'
+                : 'bg-gray-200'
+            }`}
+          >
+            {i + 1}
+          </button>
+        ))}
       </div>
     </div>
   );

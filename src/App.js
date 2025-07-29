@@ -7,7 +7,7 @@ import Header from './components/Header';
 import Navigation from './components/Navigation';
 import Categories from './components/CategoryGrid';
 import Footer from './components/Footer';
-import OrderHistory from './elements/OrderHistory';
+import OrderHistory from './components/OrderHistory';
 import ProductDetail from './components/ProductDetail';
 import Cart from './components/Cart';
 import SearchResults from './components/SearchResults';
@@ -25,6 +25,7 @@ import SpeakerPage from './components/SpeakerPage';
 import CameraPage from './components/CameraPage';
 import AdminPage from './Admin/AdminPage';
 import Checkout from './components/Checkout';
+
 // Admin Nested Sections
 import AnalyticsSection from './Admin/component/AnalyticsSection';
 import CustomersSection from './Admin/component/CustomersSection';
@@ -65,6 +66,7 @@ const AppContent = () => {
             <Route path="orders" element={<OrdersSection />} />
             <Route path="customers" element={<CustomersSection />} />
             <Route path="analytics" element={<AnalyticsSection />} />
+            
           </Route>
         </Routes>
       </main>

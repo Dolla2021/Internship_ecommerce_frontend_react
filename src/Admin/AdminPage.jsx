@@ -1,9 +1,10 @@
-// Enhanced AdminPage.jsx
+// AdminPage.jsx
+import React, { useState, useEffect, useRef } from 'react';
 import OrdersSection from './component/OrdersSection';
 import ProductsSection from './component/ProductsSection';
 import AnalyticsSection from './component/AnalyticsSection';
 import CustomersSection from './component/CustomersSection';
-import React, { useState, useEffect, useRef } from 'react';
+import { products as importedProducts } from '../data/products'; // Import product data
 import {
   FaBox,
   FaShoppingCart,
@@ -26,20 +27,28 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, PieController, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ArcElement,
+  PieController,
+  Title,
+  Tooltip,
+  Legend
+);
 const AdminPage = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const chartRef = useRef(null);
-  const [products, setProducts] = useState([]);
+  // Initialize products state with imported products data.
+  const [products] = useState(importedProducts);
   const [orders, setOrders] = useState([]);
   const [activityLogs, setActivityLogs] = useState([]);
+  // If you later decide to fetch orders from an API, you can keep this effect.
   useEffect(() => {
-    fetch('http://localhost:5000/api/products')
-      .then((res) => res.json())
-      .then((data) => setProducts(data))
-      .catch((error) => console.error('Error fetching products:', error));
+    // Fetching orders from API (or you can replace this with your static orders data)
     fetch('http://localhost:5000/api/orders')
       .then((res) => res.json())
       .then((data) => setOrders(data))
@@ -75,24 +84,33 @@ const AdminPage = () => {
   };
   return (
     <div className="flex min-h-screen bg-gray-50 text-gray-800">
-      <aside className={`fixed inset-y-0 left-0 w-64 bg-white shadow-lg transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-300 ease-in-out z-50`}>
+      <aside
+        className={`fixed inset-y-0 left-0 w-64 bg-white shadow-lg transform ${
+          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        } md:translate-x-0 transition-transform duration-300 ease-in-out z-50`}
+      >
         <div className="p-6">
           <h2 className="text-xl font-bold">Admin Panel</h2>
         </div>
         <nav className="flex flex-col gap-y-2 px-4">
-          {['dashboard', 'products', 'orders', 'customers', 'analytics',].map((tab) => (
+          {['dashboard', 'products', 'orders', 'customers', 'analytics'].map((tab) => (
             <button
               key={tab}
-              onClick={() => { setActiveTab(tab); setIsSidebarOpen(false); }}
+              onClick={() => {
+                setActiveTab(tab);
+                setIsSidebarOpen(false);
+              }}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-left ${
-                activeTab === tab ? 'bg-indigo-100 text-indigo-600 font-medium' : 'text-gray-600'
+                activeTab === tab
+                  ? 'bg-indigo-100 text-indigo-600 font-medium'
+                  : 'text-gray-600'
               }`}
             >
-              {tab === 'dashboard' && <FaChartLine />} 
-              {tab === 'products' && <FaBox />} 
-              {tab === 'orders' && <FaShoppingCart />} 
-              {tab === 'customers' && <FaUsers />} 
-              {tab === 'analytics' && <FaChartLine />} 
+              {tab === 'dashboard' && <FaChartLine />}
+              {tab === 'products' && <FaBox />}
+              {tab === 'orders' && <FaShoppingCart />}
+              {tab === 'customers' && <FaUsers />}
+              {tab === 'analytics' && <FaChartLine />}
               <span className="capitalize">{tab}</span>
             </button>
           ))}
@@ -115,7 +133,11 @@ const AdminPage = () => {
             <button className="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600">
               <FaPlus className="mr-1" /> Add Product
             </button>
-            <img src="https://via.placeholder.com/30" className="rounded-full border-2 border-indigo-500" />
+            <img
+              src="https://via.placeholder.com/30"
+              className="rounded-full border-2 border-indigo-500"
+              alt="Admin Avatar"
+            />
             <button className="md:hidden text-gray-600" onClick={toggleSidebar}>
               {isSidebarOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
             </button>
@@ -168,10 +190,16 @@ const AdminPage = () => {
               <div className="bg-white p-6 rounded-xl shadow-lg col-span-1">
                 <h2 className="text-lg font-semibold mb-4">Best Product</h2>
                 <div className="space-y-4">
-                  <img src="https://via.placeholder.com/300x150" alt="Best Product" className="rounded-lg w-full object-cover" />
+                  <img
+                    src="https://via.placeholder.com/300x150"
+                    alt="Best Product"
+                    className="rounded-lg w-full object-cover"
+                  />
                   <h3 className="text-gray-800 font-semibold">Apple Airpods</h3>
                   <p className="text-sm text-gray-500">24 Jun 2022</p>
-                  <button className="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600">Buy Now</button>
+                  <button className="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600">
+                    Buy Now
+                  </button>
                 </div>
               </div>
               <div className="bg-white p-6 rounded-xl shadow-lg md:col-span-2">
@@ -185,32 +213,36 @@ const AdminPage = () => {
                   </div>
                 </div>
                 <div className="space-y-3">
-                  {[
-                    { name: "Tay Soon T-Shirt", price: 1200, orders: 200, stock: 0, image: "https://via.placeholder.com/40" },
-                    { name: "Nike Shoe", price: 1200, orders: 200, stock: 1900, image: "https://via.placeholder.com/40" },
-                    { name: "Beige Eco Bag", price: 1200, orders: 200, stock: 0, image: "https://via.placeholder.com/40" },
-                    { name: "Round White Watch", price: 1200, orders: 200, stock: 1900, image: "https://via.placeholder.com/40" },
-                  ].map((item, i) => (
-                    <div key={i} className="flex items-center justify-between gap-4 p-2 hover:bg-gray-50 rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <img src={item.image} className="w-10 h-10 rounded object-cover" />
-                        <div>
-                          <p className="font-semibold">{item.name}</p>
-                          <p className="text-xs text-gray-500">24 Jun 2022</p>
+                 {products
+                    .sort((a, b) => (b.orders || 0) - (a.orders || 0)) // Sort by orders in descending order
+                    .slice(0, 5) // Take only top 10 products
+                    .map((item, i) => (
+                      <div
+                        key={i}
+                        className="flex items-center justify-between gap-4 p-2 hover:bg-gray-50 rounded-lg"
+                      >
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={item.image}
+                            className="w-10 h-10 rounded object-cover"
+                            alt={item.name}
+                          />
+                          <div>
+                            <p className="font-semibold">{item.name}</p>
+                            <p className="text-xs text-gray-500">24 Jun 2022</p>
+                          </div>
                         </div>
+                        <p className="text-sm font-medium">${item.price}</p>
+                        <p className="text-sm font-medium">{item.orders} Orders</p>
+                        <p>
+                          {item.stock > 0 ? (
+                            <span className="text-green-600 text-sm">In stock</span>
+                          ) : (
+                            <span className="text-red-500 text-sm">Out of stock</span>
+                          )}
+                        </p>
                       </div>
-                      <p className="text-sm font-medium">${item.price}</p>
-                      <p className="text-sm font-medium">{item.orders} Orders</p>
-                      <p>
-                        {item.stock > 0 ? (
-                          <span className="text-green-600 text-sm">In stock</span>
-                        ) : (
-                          <span className="text-red-500 text-sm">Out of stock</span>
-                        )}
-                      </p>
-                      <button className="px-3 py-1 bg-indigo-500 text-white text-sm rounded hover:bg-indigo-600">Buy Now</button>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               </div>
             </div>
@@ -226,8 +258,13 @@ const AdminPage = () => {
           />
         )}
       </main>
-      {isSidebarOpen && <div className="fixed inset-0 bg-black bg-opacity-40 md:hidden z-40" onClick={toggleSidebar}></div>}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-40 md:hidden z-40"
+          onClick={toggleSidebar}
+        ></div>
+      )}
     </div>
   );
 };
-export default AdminPage; 
+export default AdminPage;

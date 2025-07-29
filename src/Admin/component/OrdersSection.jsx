@@ -12,15 +12,16 @@ const OrdersSection = () => {
   }, []);
 
   const fetchOrders = async () => {
-    try {
-      const response = await axios.get('http://localhost:8000/api/orders');
-      setOrders(response.data);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching orders:', error);
-      setLoading(false);
-    }
-  };
+  try {
+    const response = await axios.get('http://localhost:3000/api/orders');
+    setOrders(response.data);
+    setLoading(false);
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    setLoading(false);
+  }
+};
+
 
   const filteredOrders = orders.filter((order) => {
     if (filter === 'All') return true;
