@@ -59,10 +59,10 @@
   },
   "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
   "main": "postcss.config.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Dolla2024/internship_react_frontend.git"
-  },
+ "repository": {
+  "type": "git",
+  "url": "git+https://github.com/Dolla2021/Internship_ecommerce_frontend_react"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
