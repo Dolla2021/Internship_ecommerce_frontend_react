@@ -49,7 +49,7 @@ const AdminPage = () => {
   // If you later decide to fetch orders from an API, you can keep this effect.
   useEffect(() => {
     // Fetching orders from API (or you can replace this with your static orders data)
-    fetch('http://localhost:5000/api/orders')
+    fetch('http://localhost:8000/api/orders')
       .then((res) => res.json())
       .then((data) => setOrders(data))
       .catch((error) => console.error('Error fetching orders:', error));

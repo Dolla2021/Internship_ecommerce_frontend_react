@@ -1,90 +1,131 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
   const [error, setError] = useState('');
-  const handleSubmit = (e) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    // Basic validation
-    if (!email || !password) {
+    setLoading(true);
+    if (!formData.email || !formData.password) {
       setError('Please fill in all fields.');
+      setLoading(false);
       return;
     }
-    // Handle login logic here (e.g., API call)
-    console.log('Logging in:', { email, password });
-    // Reset form
-    setEmail('');
-    setPassword('');
+    try {
+      const response = await axios.post('http://localhost:8000/api/login', formData);
+      localStorage.setItem('token', response.data.token);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+      setFormData({ email: '', password: '' });
+      navigate('/');
+    } catch (err) {
+      setError(err.response?.data?.message || 'An error occurred during login.');
+    } finally {
+      setLoading(false);
+    }
   };
+
   return (
-    <section className="bg-white">
-      <div className="container px-6 py-10 mx-auto">
-        <div className="flex justify-center">
-          <div className="w-full xl:w-3/4 lg:w-11/12 flex">
-            {/* Left Side Image (Optional) */}
-            <div
-              className="w-full h-auto bg-gray-400 hidden lg:block lg:w-5/12 bg-cover rounded-l-lg"
-              style={{ backgroundImage: "url('https://thumbs.dreamstime.com/z/grunge-headphone-music-city-6981478.jpg?w=400')" }}
-            ></div>
-            {/* Login Form */}
-            <div className="w-full lg:w-7/12 bg-white p-5 rounded-lg lg:rounded-l-none">
-              <h3 className="pt-4 text-2xl text-center">Login to Your Account</h3>
-              {error && <p className="text-red-500 text-center">{error}</p>}
-              <form onSubmit={handleSubmit} className="px-8 pt-6 pb-8 mb-4 bg-white rounded">
-                <div className="mb-4">
-                  <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="email">
-                    Email
-                  </label>
-                  <input
-                    className="w-full px-3 py-2 mb-3 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                    id="email"
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="password">
-                    Password
-                  </label>
-                  <input
-                    className="w-full px-3 py-2 mb-3 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                    id="password"
-                    type="password"
-                    placeholder="******************"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="mb-6 text-center">
-                  <button
-                    className="w-full px-4 py-2 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700 focus:outline-none focus:shadow-outline"
-                    type="submit"
-                  >
-                    Login
-                  </button>
-                </div>
-                <hr className="mb-6 border-t" />
-                <div className="text-center">
-                  <p className="inline-block text-sm text-blue-500 align-baseline hover:text-blue-800">
-                    Forgot Password? <a href="/reset-password">Reset it here</a>
-                  </p>
-                </div>
-                <div className="text-center">
-                  <p className="inline-block text-sm text-blue-500 align-baseline hover:text-blue-800">
-                    Don't have an account? <a href="/register">Register here</a>
-                  </p>
-                </div>
-              </form>
-            </div>
+    <div className="min-h-screen flex items-center justify-center  ">
+      <div className=" rounded-3xl shadow-lg flex flex-col md:flex-row w-full max-w-3xl overflow-hidden\">
+        {/* Left Illustration */}
+        <div className="md:w-1/2 flex items-center justify-center bg-blue-200 p-8">
+          <div>
+            <img
+              src="https://www.serverbasket.ae/wp-content/uploads/2021/04/Linux-Dedicated-Server-Dubai.png"
+              alt="Welcome"
+              className="w-72 mx-auto"
+            />
+            <h2 className="text-2xl font-bold text-center mt-4 text-blue-700">Welcome</h2>
           </div>
         </div>
+        {/* Right Login Form */}
+        <div className="md:w-1/2 w-full p-8 flex flex-col justify-center">
+          <h3 className="text-2xl font-bold mb-2 text-center">Login</h3>
+          <p className="text-gray-500 text-center mb-6">Please login to continue</p>
+          {error && <p className="text-red-500 text-center mb-2">{error}</p>}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <input
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={formData.email}
+                onChange={handleChange}
+                autoComplete="username"
+                required
+              />
+            </div>
+            <div>
+              <input
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={formData.password}
+                onChange={handleChange}
+                autoComplete="current-password"
+                required
+              />
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <label className="flex items-center gap-2">
+                <input type="checkbox" className="accent-blue-500" />
+                Keep Me Logged In
+              </label>
+              <a href="/reset-password" className="text-blue-500 hover:underline">
+                Forgot Password?
+              </a>
+            </div>
+            <button
+              type="submit"
+              className="w-full py-2 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition disabled:opacity-50"
+              disabled={loading}
+            >
+              {loading ? 'Logging in...' : 'LOGIN'}
+            </button>
+          </form>
+          <div className="flex items-center my-4">
+            <hr className="flex-1 border-gray-300" />
+            <span className="mx-2 text-gray-400 text-sm">Or</span>
+            <hr className="flex-1 border-gray-300" />
+          </div>
+          <div className="flex justify-center gap-4 mb-4">
+            <button className="p-2 rounded-full border hover:bg-blue-50" title="Login with Facebook">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/facebook/facebook-original.svg" alt="fb" className="w-6 h-6" />
+            </button>
+            <button className="p-2 rounded-full border hover:bg-blue-50" title="Login with Google">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="google" className="w-6 h-6" />
+            </button>
+            <button className="p-2 rounded-full border hover:bg-blue-50" title="Login with Twitter">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/twitter/twitter-original.svg" alt="twitter" className="w-6 h-6" />
+            </button>
+          </div>
+          <p className="text-center text-sm text-gray-600">
+            Don't have an account?{' '}
+            <a href="/register" className="text-blue-500 hover:underline">
+              Register here
+            </a>
+          </p>
+        </div>
       </div>
-    </section>
+    </div>
   );
-};
-export default Login;
+}
+  export default Login;

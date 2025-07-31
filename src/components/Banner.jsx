@@ -50,18 +50,8 @@ const Banner = () => {
         onMouseLeave={() => setIsHovered(false)}
       />
       {/* Navigation Arrows */}
-      <button
-        onClick={handlePrev}
-        className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full shadow-lg p-2 hover:bg-gray-200 transition"
-      >
-        &#10094; {/* Left Arrow */}
-      </button>
-      <button
-        onClick={handleNext}
-        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full shadow-lg p-2 hover:bg-gray-200 transition"
-      >
-        &#10095; {/* Right Arrow */}
-      </button>
+    
+     
       {/* Description and Learn More Button */}
       <div className="mt-4 text-center">
         <p className="text-lg font-semibold">{banners[current].description}</p>

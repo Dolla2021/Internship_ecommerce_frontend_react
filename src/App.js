@@ -31,6 +31,9 @@ import AnalyticsSection from './Admin/component/AnalyticsSection';
 import CustomersSection from './Admin/component/CustomersSection';
 import OrdersSection from './Admin/component/OrdersSection';
 import ProductsSection from './Admin/component/ProductsSection';
+import UserProfilePage from './components/UserProfilePage';
+
+
 const AppContent = () => {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
@@ -48,7 +51,7 @@ const AppContent = () => {
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/about" element={<About />} />
+          <Route path="/About" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
@@ -60,6 +63,7 @@ const AppContent = () => {
           {/* Customer Routes (Protected) */}
           <Route path="/order-history" element={<OrderHistory />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/UserProfilePage" element={<UserProfilePage />} />
           {/* Admin Routes (Protected) */}
           <Route path="/admin" element={<AdminPage />}>
             <Route path="products" element={<ProductsSection />} />

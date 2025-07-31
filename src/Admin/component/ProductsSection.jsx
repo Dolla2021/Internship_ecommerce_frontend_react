@@ -1,7 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const ProductsSection = () => {
+  // State Management
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
@@ -10,18 +13,29 @@ const ProductsSection = () => {
   const [priceRange, setPriceRange] = useState({ min: 500, max: 5000 });
   const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'asc' });
   const [searchTerm, setSearchTerm] = useState('');
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newProduct, setNewProduct] = useState({
+    name: '',
+    category: '',
+    price: '',
+    description: '',
+    image: ''
+  });
   const productsPerPage = 9;
+  // Data Fetching
   useEffect(() => {
     fetchProducts();
     fetchCategories();
   }, []);
   const fetchProducts = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/products');
+      const response = await axios.get('http://localhost:8000/api/products');
       setProducts(response.data);
       setLoading(false);
+      toast.success('Products loaded successfully');
     } catch (error) {
       console.error('Error fetching products:', error);
+      toast.error('Failed to load products');
       setLoading(false);
     }
   };
@@ -31,11 +45,38 @@ const ProductsSection = () => {
       setCategories(response.data);
     } catch (error) {
       console.error('Error fetching categories:', error);
+      toast.error('Failed to load categories');
     }
   };
+  // CRUD Operations
+  const handleAddProduct = async () => {
+    try {
+      await axios.post('http://localhost:8000/api/products', newProduct);
+      fetchProducts();
+      setShowAddModal(false);
+      setNewProduct({ name: '', category: '', price: '', description: '', image: '' });
+      toast.success('Product added successfully');
+    } catch (error) {
+      console.error('Error adding product:', error);
+      toast.error('Failed to add product');
+    }
+  };
+  const handleDeleteProduct = async (productId) => {
+    if (window.confirm('Are you sure you want to delete this product?')) {
+      try {
+        await axios.delete(`http://localhost:8000/api/products/${productId}`);
+        fetchProducts();
+        toast.success('Product deleted successfully');
+      } catch (error) {
+        console.error('Error deleting product:', error);
+        toast.error('Failed to delete product');
+      }
+    }
+  };
+  // Event Handlers
   const handleCategoryToggle = (category) => {
-    setSelectedCategories((prev) =>
-      prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category]
+    setSelectedCategories(prev =>
+      prev.includes(category) ? prev.filter(c => c !== category) : [...prev, category]
     );
     setCurrentPage(1);
   };
@@ -52,23 +93,7 @@ const ProductsSection = () => {
       direction: sortConfig.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc'
     });
   };
-  const handleAddProduct = async (productData) => {
-    try {
-      await axios.post('http://localhost:3000/api/products', productData);
-      fetchProducts(); // Refresh the products list
-    } catch (error) {
-      console.error('Error adding product:', error);
-    }
-  };
-  const handleDeleteProduct = async (productId) => {
-    try {
-      await axios.delete(`http://localhost:8000/api/products/${productId}`);
-      fetchProducts(); // Refresh the products list
-    } catch (error) {
-      console.error('Error deleting product:', error);
-    }
-  };
-  // Filter products based on all criteria
+  // Filtering and Sorting Logic
   const filteredProducts = products
     .filter(product => 
       (selectedCategories.length === 0 || selectedCategories.includes(product.category)) &&
@@ -85,18 +110,24 @@ const ProductsSection = () => {
         ? a[sortConfig.key].localeCompare(b[sortConfig.key])
         : b[sortConfig.key].localeCompare(a[sortConfig.key]);
     });
+  // Pagination
   const paginatedProducts = filteredProducts.slice(
     (currentPage - 1) * productsPerPage,
     currentPage * productsPerPage
   );
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
   if (loading) return <div>Loading...</div>;
-  // Rest of the component remains the same...
-   return (
+  return (
     <div className="container mx-auto px-4">
+      <ToastContainer position="top-right" autoClose={3000} />
+      
+      {/* Header Section */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Products Management</h2>
-        <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+        <button 
+          onClick={() => setShowAddModal(true)}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
           Add New Product
         </button>
       </div>
@@ -224,6 +255,67 @@ const ProductsSection = () => {
           </button>
         ))}
       </div>
+      {/* Add Product Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg w-96">
+            <h3 className="text-lg font-semibold mb-4">Add New Product</h3>
+            <input
+              type="text"
+              placeholder="Product Name"
+              value={newProduct.name}
+              onChange={(e) => setNewProduct({...newProduct, name: e.target.value})}
+              className="w-full p-2 border rounded mb-2"
+            />
+            <select
+              value={newProduct.category}
+              onChange={(e) => setNewProduct({...newProduct, category: e.target.value})}
+              className="w-full p-2 border rounded mb-2"
+            >
+              <option value="">Select Category</option>
+              {categories.map(category => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+            <input
+              type="number"
+              placeholder="Price"
+              value={newProduct.price}
+              onChange={(e) => setNewProduct({...newProduct, price: e.target.value})}
+              className="w-full p-2 border rounded mb-2"
+            />
+            <textarea
+              placeholder="Description"
+              value={newProduct.description}
+              onChange={(e) => setNewProduct({...newProduct, description: e.target.value})}
+              className="w-full p-2 border rounded mb-2"
+            />
+            <input
+              type="text"
+              placeholder="Image URL"
+              value={newProduct.image}
+              onChange={(e) => setNewProduct({...newProduct, image: e.target.value})}
+              className="w-full p-2 border rounded mb-4"
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAddProduct}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Add Product
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

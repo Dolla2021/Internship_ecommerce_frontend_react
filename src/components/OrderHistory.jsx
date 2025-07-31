@@ -11,7 +11,7 @@ const OrderHistory = () => {
       setLoading(true);
       setError("");
       try {
-        const resp = await fetch("http://localhost:5000/api/orders/user", {
+        const resp = await fetch("http://localhost:8000/api/orders/user", {
           credentials: "include",
         });
         if (!resp.ok) throw new Error("Failed to load order history");

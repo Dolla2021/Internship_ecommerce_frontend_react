@@ -6,7 +6,7 @@ const Wishlist = () => {
   const { wishlist, removeFromWishlist } = useContext(WishlistContext);
   const { addToCart } = useContext(CartContext);
   const [loadingMessage, setLoadingMessage] = useState(''); // State for loading message
-  const handleAddToCart = (item) => {
+  const handleAddToCart = (item,description) => {
     setLoadingMessage(`Adding to your cart...`);
     // Simulate an asynchronous operation (e.g., API call)
     setTimeout(() => {
@@ -47,18 +47,19 @@ const Wishlist = () => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {wishlist.map((item) => (
-            <div key={item.id} className="border p-4 rounded-lg shadow-md bg-white transition-transform transform hover:scale-105">
+            <div key={item.id} className="border p-4 rounded-lg shadow-lg bg-white transition-transform transform hover:scale-105">
               <img
                 src={item.image}
                 alt={item.name}
-                className="h-40 w-full object-cover rounded"
+                className="h-1/2 w-full object-cover rounded"
               />
               <h3 className="text-lg font-semibold mt-2">{item.name}</h3>
               <p className="text-gray-700">${item.price}</p>
+              <p className='texr-gray-700'>{item.description}</p>
               <div className="mt-4 flex justify-between">
                 <button
                   onClick={() => handleAddToCart(item)}
-                  className="bg-blue-600 text-white font-semibold py-1 px-3 rounded hover:bg-blue-700 transition"
+                  className="bg-green-600 text-white font-semibold py-1 px-3 rounded hover:bg-blue-700 transition"
                 >
                   Add to Cart
                 </button>

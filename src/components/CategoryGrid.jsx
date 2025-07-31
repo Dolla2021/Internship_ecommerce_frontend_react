@@ -35,7 +35,7 @@ const Categories = () => {
                                 <img
                                     src={product.image}
                                     alt={product.name}
-                                    className="h-44 w-full object-cover sm:h-56"
+                                    className="h-52 w-full object-cover sm:h-56"
                                 />
                                 <div className="p-3">
                                     <p className="text-xs text-gray-500">{product.description}</p>

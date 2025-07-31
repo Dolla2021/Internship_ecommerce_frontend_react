@@ -22,7 +22,7 @@ const CheckoutPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const subtotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
-  const shipping = 10.00;
+  const shipping = 0;
   const total = subtotal + shipping;
   const handleInputChange = (e) => {
     const { name, value } = e.target;

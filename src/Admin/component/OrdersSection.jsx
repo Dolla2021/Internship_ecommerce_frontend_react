@@ -13,7 +13,7 @@ const OrdersSection = () => {
 
   const fetchOrders = async () => {
   try {
-    const response = await axios.get('http://localhost:3000/api/orders');
+    const response = await axios.get('http://localhost:8000/api/orders');
     setOrders(response.data);
     setLoading(false);
   } catch (error) {
